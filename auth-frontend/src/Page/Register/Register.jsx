@@ -30,7 +30,7 @@ const Register = () => {
 
     setLoading(true);
     try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/api/register`, form);
+      await axios.post(process.env.REACT_APP_API_URL + "/api/register", form);
       sessionStorage.setItem("tempEmail", form.email);
       sessionStorage.setItem("otpMode", "register");
       navigate("/verify-otp");
