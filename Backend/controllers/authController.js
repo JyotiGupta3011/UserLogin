@@ -4,13 +4,10 @@ const jwt = require("jsonwebtoken");
 const otpGenerator = require("otp-generator");
 const sendOTP = require("../utils/sendOTP");
 
-// 1. Registration Flow [cite: 3]
-// Update ONLY the register function inside authController.js
 exports.register = async (req, res) => {
   try {
     const { name, email, phone } = req.body;
 
-    // Backend validation for 10 digits [cite: 37]
     if (!phone || phone.length !== 10) {
       return res.status(400).json({ message: "Phone number must be exactly 10 digits" });
     }
@@ -19,9 +16,8 @@ exports.register = async (req, res) => {
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
-    // ... rest of your existing register logic remains identical
 
-    const otp = otpGenerator.generate(6, { // [cite: 5]
+    const otp = otpGenerator.generate(6, { 
       upperCaseAlphabets: false,
       specialChars: false,
       lowerCaseAlphabets: false
@@ -32,17 +28,16 @@ exports.register = async (req, res) => {
       email,
       phone,
       otp,
-      otpExpiry: Date.now() + 5 * 60 * 1000, // [cite: 5]
+      otpExpiry: Date.now() + 5 * 60 * 1000, 
     });
 
-    await sendOTP(email, otp); // [cite: 6]
+    await sendOTP(email, otp); 
     res.json({ message: "OTP sent" });
   } catch (error) {
     res.status(500).json({ message: "Registration error", error });
   }
 };
 
-// Verify OTP for Registration [cite: 7]
 exports.verifyOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -50,11 +45,11 @@ exports.verifyOTP = async (req, res) => {
 
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    if (user.otp !== otp || user.otpExpiry < Date.now()) { // [cite: 33]
+    if (user.otp !== otp || user.otpExpiry < Date.now()) {
       return res.status(400).json({ message: "Invalid or expired OTP" });
     }
 
-    user.isVerified = true; // [cite: 8]
+    user.isVerified = true; 
     await user.save();
     res.json({ message: "OTP Verified" });
   } catch (error) {
@@ -62,14 +57,13 @@ exports.verifyOTP = async (req, res) => {
   }
 };
 
-// Set Password [cite: 8, 27]
 exports.setPassword = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
 
     const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(password, salt); // [cite: 32]
+    user.password = await bcrypt.hash(password, salt);
     
     await user.save();
     res.json({ message: "Password Set Successfully" });
@@ -78,15 +72,14 @@ exports.setPassword = async (req, res) => {
   }
 };
 
-// Login Flow - Email + Password [cite: 9]
 exports.loginPassword = async (req, res) => {
   try {
-    const { email, password } = req.body; // [cite: 10]
-    const user = await User.findOne({ email }); // [cite: 11]
+    const { email, password } = req.body; 
+    const user = await User.findOne({ email }); 
 
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    const match = await bcrypt.compare(password, user.password); // [cite: 12]
+    const match = await bcrypt.compare(password, user.password); 
     if (!match) return res.status(400).json({ message: "Invalid password" });
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" }); // [cite: 13]
@@ -96,7 +89,6 @@ exports.loginPassword = async (req, res) => {
   }
 };
 
-// Login Flow - OTP [cite: 14, 19, 29]
 exports.loginOTP = async (req, res) => {
   try {
     const { email, phone } = req.body;
@@ -127,7 +119,7 @@ exports.loginOTP = async (req, res) => {
   }
 };
 
-// Verify Login OTP [cite: 30]
+
 exports.verifyLoginOTP = async (req, res) => {
   try {
     const { email, phone, otp } = req.body; // [cite: 17, 22]

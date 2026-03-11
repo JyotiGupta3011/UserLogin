@@ -3,7 +3,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
-const limiter = require("./middleware/rateLimit"); // Import your rate limiter
+const limiter = require("./middleware/rateLimit"); 
 
 dotenv.config();
 const app = express();

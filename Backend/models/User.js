@@ -10,7 +10,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     unique: true,
     required: true,
-    // Validator ensures only 10 digits are saved [cite: 37]
     validate: {
       validator: function(v) {
         return /^\d{10}$/.test(v); 
