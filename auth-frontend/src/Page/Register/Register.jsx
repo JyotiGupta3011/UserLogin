@@ -23,14 +23,13 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (form.phone.length !== 10) {
-      return alert("Phone number must be exactly 10 digits.");
-    }
+    if (form.phone.length !== 10) return alert("Phone number must be exactly 10 digits.");
 
     setLoading(true);
     try {
-      await axios.post(process.env.REACT_APP_API_URL + "/api/register", form);
+      const apiUrl = process.env.REACT_APP_API_URL + "/api/register";
+      await axios.post(apiUrl, form);
+      
       sessionStorage.setItem("tempEmail", form.email);
       sessionStorage.setItem("otpMode", "register");
       navigate("/verify-otp");
