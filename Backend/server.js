@@ -11,7 +11,11 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cors());
-
+app.use(cors({
+  origin: "https://user-login-tawny.vercel.app", 
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 // Apply Rate Limiting to all auth routes 
 app.use("/api", limiter); 
 
