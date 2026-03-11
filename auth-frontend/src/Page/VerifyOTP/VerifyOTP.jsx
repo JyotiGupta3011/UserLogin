@@ -39,7 +39,6 @@ const handleSubmit = async (e) => {
         payload.phone = otpIdentifier;
       }
     }
-
     const res = await axios.post(`${process.env.REACT_APP_API_URL}${endpoint}`, payload);
 
     if (mode === "register") {

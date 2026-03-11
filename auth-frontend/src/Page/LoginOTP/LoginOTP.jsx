@@ -20,7 +20,7 @@ const LoginOTP = () => {
     try {
       const isPhone = method === "phone";
       const payload = isPhone ? { phone: value } : { email: value }; 
-      await axios.post("${process.env.REACT_APP_API_URL}/api/login-otp", payload);
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/login-otp`, payload);
 
       sessionStorage.setItem("otpIdentifier", value); 
       sessionStorage.setItem("otpType", isPhone ? "phone" : "email");

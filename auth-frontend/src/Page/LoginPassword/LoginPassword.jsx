@@ -11,7 +11,7 @@ const LoginPassword = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post("${process.env.REACT_APP_API_URL}/api/login-password", form);
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/login-password`, form);
       localStorage.setItem("token", res.data.token);
       alert("✅ Login Successful!");
       navigate("/");
