@@ -5,6 +5,8 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     unique: true,
+    // Add lowercase to prevent "Email" vs "email" issues
+    lowercase: true, 
   },
   phone: {
     type: String,
@@ -12,9 +14,10 @@ const userSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: function(v) {
-        return /^\d{10}$/.test(v); 
+        // Updated regex: Allows 10, 11, or 12 digits
+        return /^\d{10,12}$/.test(v); 
       },
-      message: props => `${props.value} is not a valid 10-digit phone number!`
+      message: props => `${props.value} is not a valid phone number! Use 10-12 digits.`
     }
   },
   password: String,
