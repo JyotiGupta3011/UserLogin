@@ -7,23 +7,46 @@ const limiter = require("./middleware/rateLimit");
 
 dotenv.config();
 const app = express();
+
+// 1. TRUST PROXY (Required for Render + Rate Limiting)
 app.set('trust proxy', 1);
 
-// Middleware
+// 2. MIDDLEWARE
 app.use(express.json());
-app.use(cors());
+
+// 3. CORRECT CORS (Handles both Vercel and Localhost)
+const allowedOrigins = [
+  'https://user-login-tawny.vercel.app',
+  'http://localhost:3000'
+];
+
 app.use(cors({
-  origin: "https://user-login-tawny.vercel.app", 
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like Postman or mobile)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('CORS blocked by server'), false);
+    }
+  },
   credentials: true
 }));
-// Apply Rate Limiting to all auth routes 
+
+// 4. RATE LIMITING
 app.use("/api", limiter); 
 
-// Routes
+// 5. ROUTES
 app.use("/api", authRoutes);
 
+// 6. START SERVER
 const PORT = process.env.PORT || 5000;
+
 connectDB().then(() => {
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}).catch(err => {
+  console.error("Database connection failed:", err);
 });
