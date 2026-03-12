@@ -35,8 +35,9 @@ const Register = () => {
       navigate("/verify-otp");
     } catch (err) {
       alert(err.response?.data?.message || "Registration failed");
-    }
-    setLoading(false);
+    }finally {
+  setLoading(false); 
+}
   };
 
 
